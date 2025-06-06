@@ -3,12 +3,13 @@ import AuthenticationServices
 
 struct LoginView: View {
     @ObservedObject var authModel: AuthenticationModel
-    
+    @State private var email = ""
+    @State private var password = ""
+
     var body: some View {
         VStack(spacing: 30) {
             Spacer()
             
-            // App Logo/Title
             VStack(spacing: 20) {
                 Text("IWBH")
                     .font(.system(size: 60, weight: .bold, design: .rounded))
@@ -26,29 +27,40 @@ struct LoginView: View {
             
             Spacer()
             
-            // Features Preview
-            VStack(spacing: 20) {
-                FeatureRow(icon: "calendar", title: "Track Peaceful Days", description: "Count consecutive days without fighting")
-                FeatureRow(icon: "target", title: "Relationship Goals", description: "Achieve milestones together")
-                FeatureRow(icon: "heart.fill", title: "Peace Activities", description: "Discover ways to strengthen your bond")
-            }
-            .padding(.horizontal)
-            
-            Spacer()
-            
-            // Sign In Button
             VStack(spacing: 15) {
+                // Email / Password Fields
+                TextField("Email", text: $email)
+                    .keyboardType(.emailAddress)
+                    .autocapitalization(.none)
+                    .textFieldStyle(.roundedBorder)
+
+                SecureField("Password", text: $password)
+                    .textFieldStyle(.roundedBorder)
+
+                HStack {
+                    Button("Sign In") {
+                        authModel.signInWithEmail(email: email, password: password) { success in }
+                    }
+                    .buttonStyle(.borderedProminent)
+
+                    Button("Sign Up") {
+                        authModel.signUpWithEmail(email: email, password: password) { success in }
+                    }
+                    .buttonStyle(.bordered)
+                }
+
+                // Apple Sign In Button
                 SignInWithAppleButton(
                     onRequest: { request in
                         request.requestedScopes = [.fullName, .email]
                     },
                     onCompletion: { result in
-                        // Handle result - this will be managed by AuthenticationModel
+                        authModel.handleAppleSignIn(result)
                     }
                 )
                 .signInWithAppleButtonStyle(.black)
                 .frame(height: 50)
-                
+
                 Text("Your data stays private and secure on your device")
                     .font(.caption)
                     .foregroundColor(.secondary)
@@ -56,6 +68,14 @@ struct LoginView: View {
             }
             .padding(.horizontal)
             
+            // Show error messages, if any
+            if !authModel.errorMessage.isEmpty {
+                Text(authModel.errorMessage)
+                    .foregroundColor(.red)
+                    .multilineTextAlignment(.center)
+                    .padding(.horizontal)
+            }
+
             Spacer()
         }
         .padding()

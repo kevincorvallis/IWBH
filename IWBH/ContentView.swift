@@ -5,15 +5,15 @@ struct ContentView: View {
     @StateObject private var connectionModel = PartnerConnectionModel()
     
     var body: some View {
-        Group {
+        VStack {
             if authModel.isSignedIn {
-                if connectionModel.userProfile != nil {
+                if let _ = connectionModel.userProfile {
                     if connectionModel.pairingStatus == .paired {
                         MainView()
                             .environmentObject(authModel)
                             .environmentObject(connectionModel)
                     } else {
-                        PartnerConnectionView(connectionModel: connectionModel)
+                        PartnerConnectionView(connectionModel: connectionModel, authModel: authModel)
                     }
                 } else {
                     ProfileSetupView(connectionModel: connectionModel, authModel: authModel)
@@ -23,7 +23,6 @@ struct ContentView: View {
             }
         }
         .onAppear {
-            // Create profile automatically after sign in if it doesn't exist
             if authModel.isSignedIn && connectionModel.userProfile == nil {
                 connectionModel.createProfile(
                     userID: authModel.userID,
@@ -32,7 +31,7 @@ struct ContentView: View {
             }
         }
     }
-} 
+}
 
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {

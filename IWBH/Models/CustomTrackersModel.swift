@@ -328,7 +328,7 @@ class CustomTrackersModel: ObservableObject {
         case "yellow": return .yellow
         case "orange": return .orange
         case "purple": return .purple
-        case "pink": return .pink
+        case "pink": return .pink // Use SwiftUI's built-in pink
         case "indigo": return .indigo
         case "teal": return .teal
         case "mint": return .mint
@@ -340,7 +340,8 @@ class CustomTrackersModel: ObservableObject {
     
     private func saveTrackers() {
         if let encoded = try? JSONEncoder().encode(trackers) {
-            UserDefaults.standard.set(encoded, forKey: "customTrackers")
+            let defaults = UserDefaults(suiteName: "group.leeCorp.IWBH")
+            defaults?.set(encoded, forKey: "customTrackers")
         }
     }
     

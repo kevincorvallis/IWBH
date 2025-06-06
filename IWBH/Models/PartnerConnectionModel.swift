@@ -1,120 +1,109 @@
-import Foundation
 import SwiftUI
-import CloudKit
+import Foundation
 import Combine
+import FirebaseFirestore
 
+// MARK: - PartnerConnectionModel
+@MainActor
 class PartnerConnectionModel: ObservableObject {
     @Published var userProfile: UserProfile?
     @Published var pairingStatus: PairingStatus = .unpaired
     @Published var pairCode: String = ""
-    @Published var enteredPairCode: String = ""
-    @Published var isGeneratingCode: Bool = false
-    @Published var isPairing: Bool = false
+    @Published var isGeneratingCode = false
+    @Published var isPairing = false
     @Published var pairingError: String?
-    @Published var showingPairCodeSheet: Bool = false
-    @Published var showingEnterCodeSheet: Bool = false
-    
-    private var cancellables = Set<AnyCancellable>()
-    
-    init() {
-        loadProfile()
-        setupRealtimeUpdates()
-    }
-    
-    // MARK: - Profile Management
-    
-    func createProfile(userID: String, name: String) {
-        let profile = UserProfile(userID: userID, name: name)
-        self.userProfile = profile
-        saveProfile()
-    }
-    
-    func updateProfile(_ profile: UserProfile) {
-        self.userProfile = profile
-        saveProfile()
-        // TODO: Sync to CloudKit
-    }
-    
-    private func saveProfile() {
-        guard let profile = userProfile else { return }
-        if let data = try? JSONEncoder().encode(profile) {
-            UserDefaults.standard.set(data, forKey: "userProfile")
-        }
-    }
-    
-    private func loadProfile() {
-        guard let data = UserDefaults.standard.data(forKey: "userProfile"),
-              let profile = try? JSONDecoder().decode(UserProfile.self, from: data) else {
-            return
-        }
-        self.userProfile = profile
-        updatePairingStatus()
-    }
-    
-    // MARK: - Pairing System
-    
+    @Published var showingPairCodeSheet = false
+    @Published var showingEnterCodeSheet = false
+    @Published var connectionHealthy = true
+    @Published var lastSyncTime = Date()
+
+    private var partnerListener: ListenerRegistration?
+    private var pairCodeTimer: Timer?
+    private let db = Firestore.firestore()
+
+    init() { loadProfile() }
+    deinit { partnerListener?.remove() }
+
     func generatePairCode() {
         isGeneratingCode = true
         pairingError = nil
-        
-        // Generate a unique 6-digit code
         let code = String(format: "%06d", Int.random(in: 100000...999999))
-        self.pairCode = code
-        
-        // Update profile with pair code
+        pairCode = code
         userProfile?.pairCode = code
         saveProfile()
-        
-        // TODO: Upload to CloudKit with expiration (15 minutes)
-        
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-            self.isGeneratingCode = false
-            self.pairingStatus = .waitingForPartner
-            self.showingPairCodeSheet = true
+        pairCodeTimer?.invalidate()
+        pairCodeTimer = Timer.scheduledTimer(withTimeInterval: 900, repeats: false) { [weak self] _ in
+            Task { await self?.expirePairCode() }
         }
+        isGeneratingCode = false
+        pairingStatus = .waitingForPartner
+        showingPairCodeSheet = true
     }
-    
-    func enterPairCode(_ code: String) {
+
+    private func expirePairCode() async {
+        userProfile?.pairCode = nil
+        saveProfile()
+        pairCode = ""
+        pairingStatus = .unpaired
+        pairingError = "Pair code expired. Please generate a new one."
+        pairCodeTimer?.invalidate()
+    }
+
+    func enterPartnerCode(_ code: String) {
+        guard code.count == 6 else {
+            pairingError = "Please enter a 6-digit code."
+            return
+        }
         isPairing = true
         pairingError = nil
-        
-        // Simulate pairing process
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
-            // TODO: Search CloudKit for matching pair code
-            // For now, simulate successful pairing
-            if code.count == 6 && code != self.pairCode {
-                self.completePairing(partnerUserID: "partner_\(code)")
-            } else {
-                self.pairingError = "Invalid pair code. Please check and try again."
-            }
-            self.isPairing = false
-        }
+        Task { await searchForPairCodeInFirebase(code) }
     }
-    
-    private func completePairing(partnerUserID: String) {
-        // Create mock partner info
+
+    private func searchForPairCodeInFirebase(_ code: String) async {
+        guard let currentUserID = userProfile?.userID else {
+            pairingError = "User profile not available."
+            isPairing = false
+            return
+        }
+        do {
+            let doc = try await db.collection("pairCodes").document(code).getDocument()
+            guard let data = doc.data(), doc.exists else {
+                pairingError = "Invalid code."
+                isPairing = false
+                return
+            }
+            let partnerUserID = data["userID"] as? String ?? ""
+            if partnerUserID == currentUserID {
+                pairingError = "You cannot pair with yourself."
+                isPairing = false
+                return
+            }
+            await completePairing(partnerUserID: partnerUserID)
+        } catch {
+            pairingError = "Error: \(error.localizedDescription)"
+        }
+        isPairing = false
+    }
+
+    private func completePairing(partnerUserID: String) async {
         let partnerInfo = PartnerInfo(
             userID: partnerUserID,
-            name: "Partner", 
+            name: "Partner",
             displayName: "My Love",
             profileEmoji: "💕",
             bio: "Connected with love",
             isOnline: true,
             lastSeen: Date()
         )
-        
         userProfile?.partnerId = partnerUserID
         userProfile?.partnerProfile = partnerInfo
-        userProfile?.pairCode = nil // Clear pair code after successful pairing
-        
+        userProfile?.pairCode = nil
         saveProfile()
         pairingStatus = .paired
         showingEnterCodeSheet = false
-        
-        // TODO: Notify partner of successful pairing
-        // TODO: Clear pair code from CloudKit
+        await setupFirebaseListeners()
     }
-    
+
     func unpair() {
         userProfile?.partnerId = nil
         userProfile?.partnerProfile = nil
@@ -122,16 +111,40 @@ class PartnerConnectionModel: ObservableObject {
         saveProfile()
         pairingStatus = .unpaired
         pairCode = ""
-        
-        // TODO: Notify partner and update CloudKit
+        partnerListener?.remove()
     }
-    
+
+    func createProfile(userID: String, name: String) {
+        userProfile = UserProfile(userID: userID, name: name)
+        saveProfile()
+    }
+
+    private func loadProfile() {
+        if let data = UserDefaults.standard.data(forKey: "userProfile"),
+           let profile = try? JSONDecoder().decode(UserProfile.self, from: data) {
+            userProfile = profile
+            updatePairingStatus()
+        }
+    }
+
+    func updateProfile(_ updatedProfile: UserProfile) {
+        userProfile = updatedProfile
+        saveProfile()
+        updatePairingStatus()
+    }
+
+    private func saveProfile() {
+        guard let profile = userProfile else { return }
+        if let data = try? JSONEncoder().encode(profile) {
+            UserDefaults.standard.set(data, forKey: "userProfile")
+        }
+    }
+
     private func updatePairingStatus() {
         guard let profile = userProfile else {
             pairingStatus = .unpaired
             return
         }
-        
         if profile.partnerId != nil {
             pairingStatus = .paired
         } else if profile.pairCode != nil {
@@ -141,55 +154,121 @@ class PartnerConnectionModel: ObservableObject {
             pairingStatus = .unpaired
         }
     }
-    
-    // MARK: - Real-time Updates
-    
-    private func setupRealtimeUpdates() {
-        // TODO: Set up CloudKit subscription for real-time partner updates
-        // For now, simulate periodic updates
-        Timer.publish(every: 30, on: .main, in: .common)
-            .autoconnect()
-            .sink { _ in
-                self.updatePartnerStatus()
+
+    func setupFirebaseListeners() async {
+        guard let partnerID = userProfile?.partnerId else { return }
+        partnerListener?.remove()
+        partnerListener = db.collection("users").document(partnerID)
+            .addSnapshotListener { [weak self] snapshot, _ in
+                guard let self = self,
+                      let doc = snapshot, doc.exists,
+                      let data = doc.data(),
+                      var partnerProfile = self.userProfile?.partnerProfile else { return }
+                partnerProfile.isOnline = data["isOnline"] as? Bool ?? false
+                if let lastSeen = data["lastSeen"] as? Timestamp {
+                    partnerProfile.lastSeen = lastSeen.dateValue()
+                }
+                self.userProfile?.partnerProfile = partnerProfile
+                self.saveProfile()
+                self.connectionHealthy = true
+                self.lastSyncTime = Date()
             }
-            .store(in: &cancellables)
     }
-    
-    private func updatePartnerStatus() {
-        // TODO: Fetch latest partner info from CloudKit
-        guard var profile = userProfile,
-              var _ = profile.partnerId else { return }
-        
-        // Simulate partner online status
-        profile.partnerProfile?.isOnline = Bool.random()
-        if !(profile.partnerProfile?.isOnline ?? false) {
-            profile.partnerProfile?.lastSeen = Date().addingTimeInterval(-Double.random(in: 300...3600))
-        }
-        
-        self.userProfile = profile
-        saveProfile()
-    }
-    
-    // MARK: - Utility Functions
-    
+
     func formatLastSeen(_ date: Date) -> String {
         let formatter = RelativeDateTimeFormatter()
         formatter.unitsStyle = .abbreviated
         return formatter.localizedString(for: date, relativeTo: Date())
     }
-    
+
     func isPartnerOnline() -> Bool {
-        return userProfile?.partnerProfile?.isOnline ?? false
+        userProfile?.partnerProfile?.isOnline ?? false
     }
 }
 
-// MARK: - CloudKit Extensions (TODO)
+// MARK: - Supporting Views
+struct PairCodeSheet: View {
+    @ObservedObject var connectionModel: PartnerConnectionModel
+    @Environment(\.dismiss) var dismiss
+    var body: some View {
+        VStack {
+            Text("Your Pair Code")
+            Text(connectionModel.pairCode).font(.largeTitle).monospaced()
+            Button("Close") { dismiss() }
+                .foregroundColor(.gray)
+        }
+        .padding()
+    }
+}
 
-extension PartnerConnectionModel {
-    // TODO: Implement CloudKit functionality
-    // - Upload pair codes with expiration
-    // - Search for matching pair codes
-    // - Sync profile updates
-    // - Real-time notifications
-    // - Handle conflicts and errors
+struct EnterCodeSheet: View {
+    @ObservedObject var connectionModel: PartnerConnectionModel
+    @State private var enteredCode: String = ""
+    @Environment(\.dismiss) var dismiss
+    var body: some View {
+        VStack(spacing: 16) {
+            TextField("Enter Partner Code", text: $enteredCode)
+                .textFieldStyle(.roundedBorder)
+                .keyboardType(.numberPad)
+            Button("Connect") {
+                connectionModel.enterPartnerCode(enteredCode)
+                dismiss()
+            }
+            .foregroundColor(.blue)
+            Button("Cancel") { dismiss() }
+                .foregroundColor(.red)
+        }
+        .padding()
+    }
+}
+
+struct ProfileSheet: View {
+    @Environment(\.dismiss) var dismiss
+    var body: some View {
+        VStack(spacing: 16) {
+            Text("Profile")
+                .font(.title)
+            Button("Close") { dismiss() }
+                .foregroundColor(.gray)
+        }
+        .padding()
+    }
+}
+
+struct UnpairedStatusView: View {
+    var body: some View {
+        VStack {
+            Image(systemName: "heart.slash")
+            Text("You are unpaired.")
+        }
+    }
+}
+
+struct WaitingStatusView: View {
+    let pairCode: String
+    var body: some View {
+        VStack {
+            Image(systemName: "clock")
+            Text("Waiting for partner with code: \(pairCode)")
+        }
+    }
+}
+
+struct PairedStatusView: View {
+    let partner: UserProfile
+    var body: some View {
+        VStack {
+            Image(systemName: "person.2.fill")
+            Text("Paired with: \(partner.name)")
+        }
+    }
+}
+
+struct FailedStatusView: View {
+    var body: some View {
+        VStack {
+            Image(systemName: "exclamationmark.triangle")
+            Text("Pairing failed. Try again.")
+        }
+    }
 }
