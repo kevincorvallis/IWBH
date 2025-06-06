@@ -1,24 +1,41 @@
-//
-//  ContentView.swift
-//  IWBH
-//
-//  Created by Kevin Lee on 6/5/25.
-//
-
 import SwiftUI
 
 struct ContentView: View {
+    @StateObject private var authModel = AuthenticationModel()
+    @StateObject private var connectionModel = PartnerConnectionModel()
+    
     var body: some View {
-        VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundStyle(.tint)
-            Text("Hello, world!")
+        Group {
+            if authModel.isSignedIn {
+                if connectionModel.userProfile != nil {
+                    if connectionModel.pairingStatus == .paired {
+                        MainView()
+                            .environmentObject(authModel)
+                            .environmentObject(connectionModel)
+                    } else {
+                        PartnerConnectionView(connectionModel: connectionModel)
+                    }
+                } else {
+                    ProfileSetupView(connectionModel: connectionModel, authModel: authModel)
+                }
+            } else {
+                LoginView(authModel: authModel)
+            }
         }
-        .padding()
+        .onAppear {
+            // Create profile automatically after sign in if it doesn't exist
+            if authModel.isSignedIn && connectionModel.userProfile == nil {
+                connectionModel.createProfile(
+                    userID: authModel.userID,
+                    name: authModel.userName
+                )
+            }
+        }
     }
-}
+} 
 
-#Preview {
-    ContentView()
+struct ContentView_Previews: PreviewProvider {
+    static var previews: some View {
+        ContentView()
+    }
 }

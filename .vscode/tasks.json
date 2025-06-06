@@ -1,0 +1,15 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "Build IWBH App",
+			"type": "shell",
+			"command": "xcodebuild -project IWBH.xcodeproj -scheme IWBH -configuration Debug -sdk iphonesimulator build",
+			"group": "build",
+			"problemMatcher": [
+				"$xcode"
+			],
+			"isBackground": false
+		}
+	]
+}

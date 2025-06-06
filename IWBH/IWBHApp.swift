@@ -1,10 +1,3 @@
-//
-//  IWBHApp.swift
-//  IWBH
-//
-//  Created by Kevin Lee on 6/5/25.
-//
-
 import SwiftUI
 
 @main
