@@ -52,6 +52,7 @@ struct LoginView: View {
                             isEmailValid: $isEmailValid,
                             isPasswordValid: $isPasswordValid,
                             isLoading: $isLoading,
+                            email: $email,
                             signIn: signIn,
                             signUp: signUp,
                             authModel: authModel
@@ -256,4 +257,3 @@ struct EmailFieldView: View {
        }
    }
 }
-
