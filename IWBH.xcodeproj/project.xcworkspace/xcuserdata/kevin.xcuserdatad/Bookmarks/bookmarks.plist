@@ -10,15 +10,15 @@
 				<key>location-parameters</key>
 				<dict>
 					<key>EndingColumnNumber</key>
-					<string>98</string>
+					<string>0</string>
 					<key>EndingLineNumber</key>
-					<string>41</string>
+					<string>259</string>
 					<key>StartingColumnNumber</key>
-					<string>98</string>
+					<string>0</string>
 					<key>StartingLineNumber</key>
-					<string>41</string>
+					<string>259</string>
 					<key>Timestamp</key>
-					<string>770916992.039907</string>
+					<string>771022859.665846</string>
 				</dict>
 				<key>rebasable-url</key>
 				<dict>
@@ -36,14 +36,11 @@
 				<key>focused</key>
 				<string></string>
 				<key>leading</key>
-				<string>                HStack {
-                    Button("Sign In") {
-                        authModel.signInWithEmail(email: email, password: password) { success in }</string>
-				<key>trailing</key>
-				<string>
-                    }
-                    .buttonStyle(.borderedProminent)
+				<string>   }
+}
 </string>
+				<key>trailing</key>
+				<string></string>
 			</dict>
 			<key>title</key>
 			<string>Error: Referencing subscript 'subscript(dynamicMember:)' requires wrapper 'ObservedObject&lt;AuthenticationModel&gt;.Wrapper'</string>
@@ -56,15 +53,15 @@
 				<key>location-parameters</key>
 				<dict>
 					<key>EndingColumnNumber</key>
-					<string>98</string>
+					<string>0</string>
 					<key>EndingLineNumber</key>
-					<string>41</string>
+					<string>259</string>
 					<key>StartingColumnNumber</key>
-					<string>98</string>
+					<string>0</string>
 					<key>StartingLineNumber</key>
-					<string>41</string>
+					<string>259</string>
 					<key>Timestamp</key>
-					<string>770916992.039953</string>
+					<string>771022859.665801</string>
 				</dict>
 				<key>rebasable-url</key>
 				<dict>
@@ -82,14 +79,11 @@
 				<key>focused</key>
 				<string></string>
 				<key>leading</key>
-				<string>                HStack {
-                    Button("Sign In") {
-                        authModel.signInWithEmail(email: email, password: password) { success in }</string>
-				<key>trailing</key>
-				<string>
-                    }
-                    .buttonStyle(.borderedProminent)
+				<string>   }
+}
 </string>
+				<key>trailing</key>
+				<string></string>
 			</dict>
 			<key>title</key>
 			<string>Error: Cannot call value of non-function type 'Binding&lt;Subject&gt;'</string>
@@ -102,15 +96,15 @@
 				<key>location-parameters</key>
 				<dict>
 					<key>EndingColumnNumber</key>
-					<string>98</string>
+					<string>0</string>
 					<key>EndingLineNumber</key>
-					<string>41</string>
+					<string>259</string>
 					<key>StartingColumnNumber</key>
-					<string>98</string>
+					<string>0</string>
 					<key>StartingLineNumber</key>
-					<string>41</string>
+					<string>259</string>
 					<key>Timestamp</key>
-					<string>770916992.039531</string>
+					<string>771022859.665825</string>
 				</dict>
 				<key>rebasable-url</key>
 				<dict>
@@ -128,14 +122,11 @@
 				<key>focused</key>
 				<string></string>
 				<key>leading</key>
-				<string>                HStack {
-                    Button("Sign In") {
-                        authModel.signInWithEmail(email: email, password: password) { success in }</string>
-				<key>trailing</key>
-				<string>
-                    }
-                    .buttonStyle(.borderedProminent)
+				<string>   }
+}
 </string>
+				<key>trailing</key>
+				<string></string>
 			</dict>
 			<key>title</key>
 			<string>Error: Value of type 'AuthenticationModel' has no dynamic member 'signIn' using key path from root type 'AuthenticationModel'</string>
@@ -148,15 +139,15 @@
 				<key>location-parameters</key>
 				<dict>
 					<key>EndingColumnNumber</key>
-					<string>98</string>
+					<string>0</string>
 					<key>EndingLineNumber</key>
-					<string>41</string>
+					<string>259</string>
 					<key>StartingColumnNumber</key>
-					<string>98</string>
+					<string>0</string>
 					<key>StartingLineNumber</key>
-					<string>41</string>
+					<string>259</string>
 					<key>Timestamp</key>
-					<string>770916992.039974</string>
+					<string>771022859.665832</string>
 				</dict>
 				<key>rebasable-url</key>
 				<dict>
@@ -174,14 +165,11 @@
 				<key>focused</key>
 				<string></string>
 				<key>leading</key>
-				<string>                HStack {
-                    Button("Sign In") {
-                        authModel.signInWithEmail(email: email, password: password) { success in }</string>
-				<key>trailing</key>
-				<string>
-                    }
-                    .buttonStyle(.borderedProminent)
+				<string>   }
+}
 </string>
+				<key>trailing</key>
+				<string></string>
 			</dict>
 			<key>title</key>
 			<string>Error: Value of type 'AuthenticationModel' has no dynamic member 'signIn' using key path from root type 'AuthenticationModel'</string>
@@ -194,15 +182,15 @@
 				<key>location-parameters</key>
 				<dict>
 					<key>EndingColumnNumber</key>
-					<string>98</string>
+					<string>0</string>
 					<key>EndingLineNumber</key>
-					<string>41</string>
+					<string>259</string>
 					<key>StartingColumnNumber</key>
-					<string>98</string>
+					<string>0</string>
 					<key>StartingLineNumber</key>
-					<string>41</string>
+					<string>259</string>
 					<key>Timestamp</key>
-					<string>770916992.03994</string>
+					<string>771022859.665839</string>
 				</dict>
 				<key>rebasable-url</key>
 				<dict>
@@ -220,14 +208,11 @@
 				<key>focused</key>
 				<string></string>
 				<key>leading</key>
-				<string>                HStack {
-                    Button("Sign In") {
-                        authModel.signInWithEmail(email: email, password: password) { success in }</string>
-				<key>trailing</key>
-				<string>
-                    }
-                    .buttonStyle(.borderedProminent)
+				<string>   }
+}
 </string>
+				<key>trailing</key>
+				<string></string>
 			</dict>
 			<key>title</key>
 			<string>Error: Referencing subscript 'subscript(dynamicMember:)' requires wrapper 'ObservedObject&lt;AuthenticationModel&gt;.Wrapper'</string>
