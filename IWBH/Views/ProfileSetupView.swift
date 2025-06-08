@@ -185,6 +185,35 @@ struct ProfileSetupView: View {
     }
 }
 
+<<<<<<< HEAD
+=======
+struct InterestTag: View {
+    let text: String
+    let onRemove: () -> Void
+    
+    var body: some View {
+        HStack(spacing: 6) {
+            Text(text)
+                .font(.caption)
+                .fontWeight(.medium)
+            
+            Button(action: onRemove) {
+                Image(systemName: "xmark.circle.fill")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+            }
+        }
+        .padding(.horizontal, 12)
+        .padding(.vertical, 6)
+        .background(
+            RoundedRectangle(cornerRadius: 16)
+                .fill(Color.blue.opacity(0.1))
+                .stroke(Color.blue.opacity(0.3), lineWidth: 1)
+        )
+        .foregroundColor(.blue)
+    }
+}
+>>>>>>> main
 
 struct FlowLayout: Layout {
     let spacing: CGFloat
