@@ -48,29 +48,59 @@ struct SimpleEntry: TimelineEntry {
     let trackerValue: Int
 }
 
-// Adopt the containerBackground API for the widget view
-// Adjusted layout for quarter square size widget
+// Further refined widget design for .systemSmall to prevent text cutoff
 struct TrackerWidgetExtensionEntryView: View {
     var entry: Provider.Entry
+    @Environment(\.widgetFamily) var family
 
     var body: some View {
-        ZStack {
-            Color.blue.opacity(0.2)
-                .containerBackground(.thinMaterial, for: .widget)
-            VStack(spacing: 4) {
+        VStack(alignment: .center, spacing: 0) { // Centered for systemSmall
+            if family == .systemSmall {
                 Text("🌟")
-                    .font(.system(size: 24))
+                    .font(.title)
+                    .padding(.top, 4)
                 Text(entry.trackerName)
-                    .font(.caption)
-                    .multilineTextAlignment(.center)
-                    .foregroundColor(.blue)
-                    .lineLimit(2)
-                Text("🕒 \(entry.trackerValue) days")
-                    .font(.headline)
-                    .bold()
-                    .foregroundColor(.blue)
+                    .font(.caption2) // Smaller font for tracker name
+                    .lineLimit(1)    // Limit to 1 line for small size
+                    .foregroundColor(.secondary)
+                    .padding(.horizontal, 4)
+                Text("\(entry.trackerValue)")
+                    .font(.system(size: 30, weight: .bold)) // Prominent number
+                    .foregroundColor(Color.blue)
+                Text("days")
+                    .font(.system(size: 10)) // Very small "days" label
+                    .foregroundColor(.secondary)
+                    .padding(.bottom, 4)
+            } else {
+                // Existing layout for medium and large sizes
+                HStack {
+                    Text("🌟")
+                        .font(.title)
+                        .padding(.trailing, 4)
+                    Text(entry.trackerName)
+                        .font(.headline)
+                        .lineLimit(1)
+                        .foregroundColor(.secondary)
+                    Spacer()
+                }
+                .padding([.top, .leading, .trailing])
+
+                Spacer()
+
+                Text("\(entry.trackerValue)")
+                    .font(.system(size: 50, weight: .semibold))
+                    .foregroundColor(Color.blue)
+                    .padding([.leading, .trailing])
+
+                Text("days")
+                    .font(.callout)
+                    .foregroundColor(.secondary)
+                    .padding([.leading, .trailing, .bottom])
             }
-            .padding()
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity) // Ensure VStack fills the space
+        .containerBackground(for: .widget) {
+            // Standard container background
         }
     }
 }
