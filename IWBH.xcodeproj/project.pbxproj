@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0A911DFB2DF664BA002478EE /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0A911DFA2DF664BA002478EE /* WidgetKit.framework */; };
+		0A911DFD2DF664BA002478EE /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0A911DFC2DF664BA002478EE /* SwiftUI.framework */; };
+		0A911E0E2DF664BC002478EE /* TrackerWidgetExtensionExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 0A911DF82DF664BA002478EE /* TrackerWidgetExtensionExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		0AF981BC2DF28CB100DBBBF6 /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = 0AF981BB2DF28CB100DBBBF6 /* FirebaseAnalytics */; };
 		0AF981BE2DF28CB100DBBBF6 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 0AF981BD2DF28CB100DBBBF6 /* FirebaseAuth */; };
 		0AF981C02DF28CB100DBBBF6 /* FirebaseCore in Frameworks */ = {isa = PBXBuildFile; productRef = 0AF981BF2DF28CB100DBBBF6 /* FirebaseCore */; };
@@ -20,6 +23,13 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		0A911E0C2DF664BC002478EE /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0AD7427C2DF2351500582449 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 0A911DF72DF664BA002478EE;
+			remoteInfo = TrackerWidgetExtensionExtension;
+		};
 		0AD742922DF2351900582449 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 0AD7427C2DF2351500582449 /* Project object */;
@@ -36,13 +46,37 @@
 		};
 /* End PBXContainerItemProxy section */
 
+/* Begin PBXCopyFilesBuildPhase section */
+		0A911E132DF664BC002478EE /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				0A911E0E2DF664BC002478EE /* TrackerWidgetExtensionExtension.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
+		0A911DF82DF664BA002478EE /* TrackerWidgetExtensionExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = TrackerWidgetExtensionExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		0A911DFA2DF664BA002478EE /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
+		0A911DFC2DF664BA002478EE /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
 		0AD742842DF2351500582449 /* IWBH.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = IWBH.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		0AD742912DF2351900582449 /* IWBHTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = IWBHTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		0AD7429B2DF2351900582449 /* IWBHUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = IWBHUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		0A911E122DF664BC002478EE /* Exceptions for "TrackerWidgetExtension" folder in "TrackerWidgetExtensionExtension" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 0A911DF72DF664BA002478EE /* TrackerWidgetExtensionExtension */;
+		};
 		0AD743E82DF26CBD00582449 /* Exceptions for "IWBH" folder in "IWBH" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
@@ -53,6 +87,14 @@
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
+		0A911DFE2DF664BA002478EE /* TrackerWidgetExtension */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				0A911E122DF664BC002478EE /* Exceptions for "TrackerWidgetExtension" folder in "TrackerWidgetExtensionExtension" target */,
+			);
+			path = TrackerWidgetExtension;
+			sourceTree = "<group>";
+		};
 		0AD742862DF2351500582449 /* IWBH */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
@@ -74,6 +116,15 @@
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		0A911DF52DF664BA002478EE /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0A911DFD2DF664BA002478EE /* SwiftUI.framework in Frameworks */,
+				0A911DFB2DF664BA002478EE /* WidgetKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		0AD742812DF2351500582449 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -108,12 +159,23 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		0A911DF92DF664BA002478EE /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				0A911DFA2DF664BA002478EE /* WidgetKit.framework */,
+				0A911DFC2DF664BA002478EE /* SwiftUI.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		0AD7427B2DF2351500582449 = {
 			isa = PBXGroup;
 			children = (
 				0AD742862DF2351500582449 /* IWBH */,
 				0AD742942DF2351900582449 /* IWBHTests */,
 				0AD7429E2DF2351900582449 /* IWBHUITests */,
+				0A911DFE2DF664BA002478EE /* TrackerWidgetExtension */,
+				0A911DF92DF664BA002478EE /* Frameworks */,
 				0AD742852DF2351500582449 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -124,6 +186,7 @@
 				0AD742842DF2351500582449 /* IWBH.app */,
 				0AD742912DF2351900582449 /* IWBHTests.xctest */,
 				0AD7429B2DF2351900582449 /* IWBHUITests.xctest */,
+				0A911DF82DF664BA002478EE /* TrackerWidgetExtensionExtension.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -131,6 +194,28 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		0A911DF72DF664BA002478EE /* TrackerWidgetExtensionExtension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 0A911E0F2DF664BC002478EE /* Build configuration list for PBXNativeTarget "TrackerWidgetExtensionExtension" */;
+			buildPhases = (
+				0A911DF42DF664BA002478EE /* Sources */,
+				0A911DF52DF664BA002478EE /* Frameworks */,
+				0A911DF62DF664BA002478EE /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				0A911DFE2DF664BA002478EE /* TrackerWidgetExtension */,
+			);
+			name = TrackerWidgetExtensionExtension;
+			packageProductDependencies = (
+			);
+			productName = TrackerWidgetExtensionExtension;
+			productReference = 0A911DF82DF664BA002478EE /* TrackerWidgetExtensionExtension.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
 		0AD742832DF2351500582449 /* IWBH */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 0AD742A52DF2351900582449 /* Build configuration list for PBXNativeTarget "IWBH" */;
@@ -138,10 +223,12 @@
 				0AD742802DF2351500582449 /* Sources */,
 				0AD742812DF2351500582449 /* Frameworks */,
 				0AD742822DF2351500582449 /* Resources */,
+				0A911E132DF664BC002478EE /* Embed Foundation Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				0A911E0D2DF664BC002478EE /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				0AD742862DF2351500582449 /* IWBH */,
@@ -219,6 +306,9 @@
 				LastSwiftUpdateCheck = 1640;
 				LastUpgradeCheck = 1640;
 				TargetAttributes = {
+					0A911DF72DF664BA002478EE = {
+						CreatedOnToolsVersion = 16.4;
+					};
 					0AD742832DF2351500582449 = {
 						CreatedOnToolsVersion = 16.4;
 					};
@@ -252,11 +342,19 @@
 				0AD742832DF2351500582449 /* IWBH */,
 				0AD742902DF2351900582449 /* IWBHTests */,
 				0AD7429A2DF2351900582449 /* IWBHUITests */,
+				0A911DF72DF664BA002478EE /* TrackerWidgetExtensionExtension */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		0A911DF62DF664BA002478EE /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		0AD742822DF2351500582449 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -281,6 +379,13 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		0A911DF42DF664BA002478EE /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		0AD742802DF2351500582449 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -305,6 +410,11 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		0A911E0D2DF664BC002478EE /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 0A911DF72DF664BA002478EE /* TrackerWidgetExtensionExtension */;
+			targetProxy = 0A911E0C2DF664BC002478EE /* PBXContainerItemProxy */;
+		};
 		0AD742932DF2351900582449 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 0AD742832DF2351500582449 /* IWBH */;
@@ -318,6 +428,60 @@
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
+		0A911E102DF664BC002478EE /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 4F8Q446767;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = TrackerWidgetExtension/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = TrackerWidgetExtension;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = leeCorp.IWBH.TrackerWidgetExtension;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		0A911E112DF664BC002478EE /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 4F8Q446767;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = TrackerWidgetExtension/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = TrackerWidgetExtension;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = leeCorp.IWBH.TrackerWidgetExtension;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
 		0AD742A32DF2351900582449 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -574,6 +738,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		0A911E0F2DF664BC002478EE /* Build configuration list for PBXNativeTarget "TrackerWidgetExtensionExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				0A911E102DF664BC002478EE /* Debug */,
+				0A911E112DF664BC002478EE /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		0AD7427F2DF2351500582449 /* Build configuration list for PBXProject "IWBH" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
