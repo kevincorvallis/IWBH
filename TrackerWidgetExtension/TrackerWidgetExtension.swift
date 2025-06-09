@@ -49,20 +49,29 @@ struct SimpleEntry: TimelineEntry {
 }
 
 // Adopt the containerBackground API for the widget view
+// Adjusted layout for quarter square size widget
 struct TrackerWidgetExtensionEntryView: View {
     var entry: Provider.Entry
 
     var body: some View {
-        VStack {
-            Text(entry.trackerName)
-                .font(.headline)
-                .multilineTextAlignment(.center)
-            Text("\(entry.trackerValue) days")
-                .font(.largeTitle)
-                .bold()
+        ZStack {
+            Color.blue.opacity(0.2)
+                .containerBackground(.thinMaterial, for: .widget)
+            VStack(spacing: 4) {
+                Text("🌟")
+                    .font(.system(size: 24))
+                Text(entry.trackerName)
+                    .font(.caption)
+                    .multilineTextAlignment(.center)
+                    .foregroundColor(.blue)
+                    .lineLimit(2)
+                Text("🕒 \(entry.trackerValue) days")
+                    .font(.headline)
+                    .bold()
+                    .foregroundColor(.blue)
+            }
+            .padding()
         }
-        .padding()
-        .containerBackground(.thinMaterial, for: .widget) // Corrected containerBackground API call
     }
 }
 
