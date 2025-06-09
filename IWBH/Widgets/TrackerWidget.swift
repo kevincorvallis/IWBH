@@ -1,20 +1,6 @@
 import Foundation
 import WidgetKit
 
-struct WidgetTracker: Codable {
-    let name: String
-    let emoji: String
-    let color: String
-    let trackingType: String
-    let unit: String
-    let currentValue: Int
-    let isPrimary: Bool
-}
-
-struct TrackerWidgetEntry: TimelineEntry {
-    let date: Date
-    let tracker: WidgetTracker?
-}
 private func createEntry(for date: Date = Date()) -> TrackerWidgetEntry {
     let defaults = UserDefaults(suiteName: "group.leeCorp.IWBH")
     var tracker: WidgetTracker? = nil

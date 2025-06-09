@@ -10,7 +10,7 @@ struct ProfileSetupView: View {
     @State private var interests: [String] = []
     @State private var newInterest: String = ""
     @State private var showingEmojiPicker = false
-    
+    @State private var showingLogoutConfirmation = false
     private let emojiOptions = ["💝", "💕", "💖", "💗", "💓", "💞", "💘", "❤️", "🧡", "💛", "💚", "💙", "💜", "🤍", "🖤", "🤎", "🌹", "✨", "🦋", "🌟"]
     
     var body: some View {
@@ -99,7 +99,7 @@ struct ProfileSetupView: View {
                                             .fill(selectedLoveLanguage == language ?
                                                   Color.pink.opacity(0.2) : Color.gray.opacity(0.1))
                                             .stroke(selectedLoveLanguage == language ?
-                                                   Color.pink : Color.clear, lineWidth: 2)
+                                                    Color.pink : Color.clear, lineWidth: 2)
                                     )
                                 }
                                 .foregroundColor(.primary)
@@ -160,6 +160,16 @@ struct ProfileSetupView: View {
                 .padding(.bottom, 40)
             }
             .navigationBarHidden(true)
+            .confirmationDialog(
+                "Are you sure you want to log out?",
+                isPresented: $showingLogoutConfirmation,
+                titleVisibility: .visible
+            ) {
+                Button("Log Out", role: .destructive) {
+                    authModel.signOut()
+                }
+                Button("Cancel", role: .cancel) {}
+            }
         }
         .sheet(isPresented: $showingEmojiPicker) {
             EmojiPickerView(selectedEmoji: $selectedEmoji, emojiOptions: emojiOptions)
