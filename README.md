@@ -1,7 +1,7 @@
 # IWBH - I Wanna Be Held 💕
 
 <div align="center">
-  <img src="AppIcons/iwbh_app_icon_simple.svg" alt="IWBH App Icon" width="120" height="120">
+  <img src="assets/AppIcons/iwbh_app_icon_simple.svg" alt="IWBH App Icon" width="120" height="120">
   
   **A beautifully crafted iOS app for couples to grow together** ✨
   
@@ -85,8 +85,11 @@ IWBH (I Wanna Be Held) is a comprehensive relationship companion that combines h
 - Xcode 15.0 or later
 - iOS 16.0 or later
 - Swift 5.9 or later
+- Node.js 18+ for backend
 
-### Installation
+**📖 For detailed setup instructions, see [Development Setup Guide](docs/DEVELOPMENT_SETUP.md)**
+
+### Quick Installation
 
 1. Clone the repository:
 ```bash
@@ -95,7 +98,7 @@ cd IWBH
 ```
 
 2. **iOS App Setup:**
-   - Open `IWBH.xcodeproj` in Xcode 15.0 or later
+   - Open `ios-app/IWBH.xcodeproj` in Xcode 15.0 or later
    - Ensure iOS 16.0+ deployment target
    - Build and run on device or simulator
 
@@ -121,52 +124,66 @@ cd IWBH
    ```
 
 6. **Update iOS App Configuration:**
-   - In `ChatService.swift`, update the base URL to your backend server
+   - In `ios-app/IWBH/Services/ChatService.swift`, update the base URL to your backend server
    - For local development: `http://localhost:3000`
 
 ## 🏗️ Architecture
+
+**📖 For detailed project structure, see [Project Structure Guide](docs/PROJECT_STRUCTURE.md)**
 
 The app follows MVVM architecture with SwiftUI and includes a Node.js backend:
 
 ```
 IWBH/
-├── IWBH/                   # iOS App
-│   ├── Models/             # Data models and business logic
-│   │   ├── AuthenticationModel.swift
-│   │   ├── CustomTrackersModel.swift
-│   │   ├── PartnerConnectionModel.swift
-│   │   └── UserProfileModel.swift
-│   ├── Views/              # SwiftUI views and UI components
-│   │   ├── MainView.swift
-│   │   ├── ChatView.swift
-│   │   ├── TrackersView.swift
-│   │   ├── ProfileView.swift
-│   │   └── ActivitiesView.swift
-│   ├── Services/           # API communication
-│   │   └── ChatService.swift
-│   └── Assets.xcassets/    # App icons and images
-├── TrackerWidgetExtension/ # iOS Widgets
+├── ios-app/                # iOS Application
+│   ├── IWBH/               # Main iOS app source code
+│   │   ├── Models/         # Data models and business logic
+│   │   │   ├── AuthenticationModel.swift
+│   │   │   ├── CustomTrackersModel.swift
+│   │   │   ├── PartnerConnectionModel.swift
+│   │   │   └── UserProfileModel.swift
+│   │   ├── Views/          # SwiftUI views and UI components
+│   │   │   ├── MainView.swift
+│   │   │   ├── ChatView.swift
+│   │   │   ├── TrackersView.swift
+│   │   │   ├── ProfileView.swift
+│   │   │   └── ActivitiesView.swift
+│   │   ├── Services/       # API communication
+│   │   │   └── ChatService.swift
+│   │   └── Assets.xcassets/ # App icons and images
+│   ├── TrackerWidgetExtension/ # iOS Widgets
+│   ├── IWBHTests/          # Unit tests
+│   ├── IWBHUITests/        # UI tests
+│   └── IWBH.xcodeproj/     # Xcode project file
 ├── backend/                # Node.js API Server
 │   ├── services/           # Business logic
 │   │   └── chatService.js
 │   ├── routes/             # API endpoints
 │   │   └── chatRoutes.js
-│   ├── config/             # Configuration
+│   ├── config/             # Configuration files
+│   ├── package.json        # Node.js dependencies
 │   └── server.js           # Express server
+├── assets/                 # Static assets
+│   └── AppIcons/           # App icons and branding
+├── scripts/                # Utility scripts
+│   ├── nuclear_secret_removal.sh
+│   └── remove_env_from_history.sh
+├── docs/                   # Documentation (future)
+└── README.md               # Project documentation
 ```
 
 ### Key Components
 
-- **ChatService.swift**: Handles communication with AI coach backend
-- **CustomTrackersModel**: Manages habit tracking and local persistence
-- **PartnerConnectionModel**: Handles partner pairing and connection status
-- **UserProfileModel**: Manages user profiles and preferences
-- **ChatService.js**: Backend service for OpenAI integration and data storage
+- **ios-app/IWBH/Services/ChatService.swift**: Handles communication with AI coach backend
+- **ios-app/IWBH/Models/CustomTrackersModel**: Manages habit tracking and local persistence
+- **ios-app/IWBH/Models/PartnerConnectionModel**: Handles partner pairing and connection status
+- **ios-app/IWBH/Models/UserProfileModel**: Manages user profiles and preferences
+- **backend/services/chatService.js**: Backend service for OpenAI integration and data storage
 
 ## 🎨 Customization
 
 ### Adding New Tracker Templates
-Edit `CustomTrackersModel.swift` to add new predefined tracker templates:
+Edit `ios-app/IWBH/Models/CustomTrackersModel.swift` to add new predefined tracker templates:
 
 ```swift
 TrackerTemplate(
@@ -181,7 +198,7 @@ TrackerTemplate(
 ```
 
 ### Adding New Activities
-Edit `ActivitiesView.swift` to add new relationship activities:
+Edit `ios-app/IWBH/Views/ActivitiesView.swift` to add new relationship activities:
 
 ```swift
 Activity(
