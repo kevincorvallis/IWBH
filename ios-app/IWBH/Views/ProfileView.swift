@@ -10,6 +10,7 @@ struct ProfileView: View {
     @State private var showingLogoutConfirmation = false
     @State private var showingDisconnectConfirmation = false
     @State private var showPairingSheet = false
+    @State private var showAccountDeletionView = false
     
     var body: some View {
         NavigationView {
@@ -314,6 +315,9 @@ struct ProfileView: View {
                     showPairingSheet = false
                 }
             )
+        }
+        .sheet(isPresented: $showAccountDeletionView) {
+            AccountDeletionView()
         }
     }
     

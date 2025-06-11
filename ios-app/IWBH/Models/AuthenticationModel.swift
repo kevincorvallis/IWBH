@@ -163,4 +163,46 @@ class AuthenticationModel: ObservableObject {
         self.isGuest = false
         self.errorMessage = ""
     }
+
+    // MARK: - Account Deletion
+    func deleteAccount(feedback: String? = nil, completion: ((Result<Void, Error>) -> Void)? = nil) {
+        guard !userID.isEmpty else {
+            let error = NSError(domain: "AuthenticationModel", code: 401,
+                               userInfo: [NSLocalizedDescriptionKey: "Not signed in"])
+            errorMessage = "You must be signed in to delete your account"
+            completion?(.failure(error))
+            return
+        }
+        
+        isLoading = true
+        errorMessage = ""
+        
+        // Call the ChatService to request account deletion
+        ChatService.shared.requestAccountDeletion(userId: userID, feedback: feedback) { [weak self] result in
+            guard let self = self else { return }
+            
+            DispatchQueue.main.async {
+                self.isLoading = false
+                
+                switch result {
+                case .success(let response):
+                    // Store the grace period end date if needed for future reference
+                    UserDefaults.standard.set(response.gracePeriodEndDate, forKey: "accountDeletionGracePeriod")
+                    UserDefaults.standard.set(true, forKey: "accountDeletionInProgress")
+                    
+                    // Revoke access immediately
+                    self.signOut()
+                    
+                    // Log successful deletion request
+                    print("Account deletion requested successfully. Grace period ends on: \(response.gracePeriodEndDate)")
+                    
+                    completion?(.success(()))
+                    
+                case .failure(let error):
+                    self.errorMessage = "Failed to delete account: \(error.localizedDescription)"
+                    completion?(.failure(error))
+                }
+            }
+        }
+    }
 }

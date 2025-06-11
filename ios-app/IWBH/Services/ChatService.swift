@@ -3,6 +3,8 @@ import Combine
 import SwiftUI
 
 class ChatService: ObservableObject {
+    static let shared = ChatService()
+    
     @Published var isLoading: Bool = false
     @Published var error: String? = nil
     @Published var chatMessages: [ChatMessage] = []
@@ -290,6 +292,87 @@ class ChatService: ObservableObject {
             print("Failed to clear conversations: \(error.localizedDescription)")
         }
     }
+    
+    // MARK: - Account Deletion
+    struct AccountDeletionRequest: Codable {
+        let feedback: String?
+    }
+
+    struct AccountDeletionResponse: Codable {
+        let message: String
+        let gracePeriodEndDate: String
+    }
+
+    func requestAccountDeletion(userId: String, feedback: String?, completion: @escaping (Result<AccountDeletionResponse, Error>) -> Void) {
+        guard !userId.isEmpty else {
+            completion(.failure(ChatError.invalidUserId))
+            return
+        }
+        
+        let deletionUrl = apiUrl.replacingOccurrences(of: "/chat", with: "/users/\(userId)")
+        
+        guard let url = URL(string: deletionUrl) else {
+            completion(.failure(ChatError.invalidURL))
+            return
+        }
+        
+        var request = URLRequest(url: url)
+        request.httpMethod = "DELETE"
+        
+        // Add authentication header if needed
+        if let token = UserDefaults.standard.string(forKey: "authToken") {
+            request.addValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        }
+        
+        // Add feedback if provided
+        if let feedback = feedback, !feedback.isEmpty {
+            let deletionRequest = AccountDeletionRequest(feedback: feedback)
+            do {
+                let jsonData = try JSONEncoder().encode(deletionRequest)
+                request.httpBody = jsonData
+                request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+            } catch {
+                completion(.failure(error))
+                return
+            }
+        }
+        
+        URLSession.shared.dataTask(with: request) { data, response, error in
+            DispatchQueue.main.async {
+                if let error = error {
+                    completion(.failure(error))
+                    return
+                }
+                
+                guard let httpResponse = response as? HTTPURLResponse else {
+                    completion(.failure(ChatError.invalidResponse))
+                    return
+                }
+                
+                // 202 Accepted is expected for deletion requests that will be processed
+                guard httpResponse.statusCode == 202 else {
+                    let errorMessage = data.flatMap {
+                        String(data: $0, encoding: .utf8)
+                    } ?? "Server error: \(httpResponse.statusCode)"
+                    completion(.failure(NSError(domain: "ChatService", code: httpResponse.statusCode,
+                                               userInfo: [NSLocalizedDescriptionKey: errorMessage])))
+                    return
+                }
+                
+                guard let data = data else {
+                    completion(.failure(ChatError.noData))
+                    return
+                }
+                
+                do {
+                    let response = try JSONDecoder().decode(AccountDeletionResponse.self, from: data)
+                    completion(.success(response))
+                } catch {
+                    completion(.failure(error))
+                }
+            }
+        }.resume()
+    }
 }
 
 // MARK: - Request and Response Models
@@ -402,6 +485,8 @@ enum ChatError: Error, LocalizedError {
     case invalidURL
     case invalidResponse
     case serverError(message: String)
+    case invalidUserId
+    case noData
     
     var errorDescription: String? {
         switch self {
@@ -413,6 +498,10 @@ enum ChatError: Error, LocalizedError {
             return "Invalid server response"
         case .serverError(let message):
             return message
+        case .invalidUserId:
+            return "Invalid user ID"
+        case .noData:
+            return "No data received"
         }
     }
 }
