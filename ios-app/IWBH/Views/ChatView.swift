@@ -160,25 +160,48 @@ struct ChatBubble: View {
     @Environment(\.colorScheme) var colorScheme
     @State private var isImageLoaded = false
     @State private var loadedImage: UIImage?
+    @State private var isAppearing = false
     
     var body: some View {
         HStack {
             if message.isUser {
-                Spacer()
+                Spacer(minLength: 40)
+            } else {
+                // AI avatar for non-user messages
+                Circle()
+                    .fill(Color.pink.opacity(0.2))
+                    .frame(width: 32, height: 32)
+                    .overlay(
+                        Text("AI")
+                            .font(.system(size: 12, weight: .medium))
+                            .foregroundColor(.pink)
+                    )
+                    .padding(.leading, 4)
             }
             
-            VStack(alignment: message.isUser ? .trailing : .leading, spacing: 4) {
-                // Show file attachment if available
+            VStack(alignment: message.isUser ? .trailing : .leading, spacing: 6) {
+                // Image attachment if available
                 if let fileUrl = message.fileUrl, fileUrl.hasSuffix(".jpg") || fileUrl.hasSuffix(".jpeg") || fileUrl.hasSuffix(".png") {
                     Group {
                         if let image = loadedImage {
                             Image(uiImage: image)
                                 .resizable()
                                 .scaledToFit()
-                                .cornerRadius(12)
+                                .cornerRadius(16)
+                                .shadow(color: Color.black.opacity(0.1), radius: 3, y: 2)
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 16)
+                                        .stroke(message.isUser ? Color.pink.opacity(0.3) : Color.gray.opacity(0.3), lineWidth: 1)
+                                )
                         } else {
-                            ProgressView()
-                                .frame(width: 200, height: 150)
+                            ZStack {
+                                RoundedRectangle(cornerRadius: 16)
+                                    .fill(Color.gray.opacity(0.1))
+                                    .frame(width: 200, height: 150)
+                                
+                                ProgressView()
+                                    .scaleEffect(1.2)
+                            }
                         }
                     }
                     .onAppear {
@@ -186,18 +209,31 @@ struct ChatBubble: View {
                     }
                 }
                 
+                // Message text
                 if !message.text.isEmpty || message.isUploading {
                     Text(message.isUploading ? "Uploading..." : message.text)
-                        .padding(12)
+                        .padding(EdgeInsets(top: 12, leading: 16, bottom: 12, trailing: 16))
                         .background(
-                            message.isUser
-                            ? Color.pink
-                            : (colorScheme == .dark ? Color(.systemGray5) : Color(.systemGray6))
+                            Capsule()
+                                .fill(
+                                    message.isUser
+                                    ? LinearGradient(
+                                        gradient: Gradient(colors: [Color.pink, Color.pink.opacity(0.8)]),
+                                        startPoint: .topLeading,
+                                        endPoint: .bottomTrailing
+                                      )
+                                    : LinearGradient(
+                                        gradient: Gradient(colors: [
+                                            colorScheme == .dark ? Color(.systemGray5) : Color(.systemGray6),
+                                            colorScheme == .dark ? Color(.systemGray5) : Color(.systemGray6)
+                                        ]),
+                                        startPoint: .topLeading,
+                                        endPoint: .bottomTrailing
+                                      )
+                                )
                         )
                         .foregroundColor(message.isUser ? .white : .primary)
-                        .cornerRadius(18)
-                        .cornerRadius(message.isUser ? 18 : 2, corner: .topLeft)
-                        .cornerRadius(message.isUser ? 2 : 18, corner: .topRight)
+                        .cornerRadius(20)
                         .overlay(
                             message.isUploading ?
                             ProgressView()
@@ -207,41 +243,73 @@ struct ChatBubble: View {
                         )
                 }
                 
-                // Theme tags row
+                // Theme tags with improved styling
                 if let tags = message.themeTags, !tags.isEmpty, !message.isUser {
                     ScrollView(.horizontal, showsIndicators: false) {
                         HStack(spacing: 6) {
                             ForEach(tags, id: \.self) { tag in
                                 Text(tag.capitalized)
-                                    .font(.system(size: 10))
-                                    .padding(.horizontal, 8)
+                                    .font(.system(size: 10, weight: .medium))
+                                    .padding(.horizontal, 10)
                                     .padding(.vertical, 4)
-                                    .background(Color.pink.opacity(0.2))
+                                    .background(
+                                        Capsule()
+                                            .fill(Color.pink.opacity(0.15))
+                                            .shadow(color: Color.pink.opacity(0.1), radius: 2, y: 1)
+                                    )
                                     .foregroundColor(.pink)
-                                    .cornerRadius(12)
                             }
                         }
+                        .padding(.vertical, 2)
                     }
-                    .frame(height: 24)
+                    .frame(height: 26)
                 }
                 
-                // Timestamp
+                // Enhanced timestamp with clearer formatting
                 Text(formatTimestamp(message.timestamp))
                     .font(.system(size: 10))
-                    .foregroundColor(.secondary)
+                    .foregroundColor(message.isUser ? Color.white.opacity(0.7) : Color.secondary)
+                    .padding(.horizontal, 4)
+                    .padding(.bottom, 2)
             }
-            .frame(maxWidth: 270, alignment: message.isUser ? .trailing : .leading)
+            .frame(maxWidth: 280, alignment: message.isUser ? .trailing : .leading)
+            .opacity(isAppearing ? 1 : 0)
+            .offset(y: isAppearing ? 0 : 20)
+            .onAppear {
+                withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                    isAppearing = true
+                }
+            }
             
-            if !message.isUser {
-                Spacer()
+            if message.isUser {
+                // User avatar
+                Circle()
+                    .fill(Color.blue.opacity(0.2))
+                    .frame(width: 32, height: 32)
+                    .overlay(
+                        Text("Me")
+                            .font(.system(size: 10, weight: .semibold))
+                            .foregroundColor(.blue)
+                    )
+                    .padding(.trailing, 4)
+            } else {
+                Spacer(minLength: 40)
             }
         }
+        .padding(.vertical, 4)
     }
     
     private func formatTimestamp(_ date: Date) -> String {
-        let formatter = DateFormatter()
-        formatter.timeStyle = .short
-        return formatter.string(from: date)
+        let calendar = Calendar.current
+        if calendar.isDateInToday(date) {
+            let formatter = DateFormatter()
+            formatter.dateFormat = "h:mm a"
+            return formatter.string(from: date)
+        } else {
+            let formatter = DateFormatter()
+            formatter.dateFormat = "MMM d, h:mm a"
+            return formatter.string(from: date)
+        }
     }
     
     private func loadImage(from urlString: String) {
@@ -250,8 +318,10 @@ struct ChatBubble: View {
         URLSession.shared.dataTask(with: url) { data, response, error in
             if let data = data, let image = UIImage(data: data) {
                 DispatchQueue.main.async {
-                    self.loadedImage = image
-                    self.isImageLoaded = true
+                    withAnimation(.easeIn(duration: 0.3)) {
+                        self.loadedImage = image
+                        self.isImageLoaded = true
+                    }
                 }
             }
         }.resume()

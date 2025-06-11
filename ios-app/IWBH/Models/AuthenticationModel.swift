@@ -205,4 +205,68 @@ class AuthenticationModel: ObservableObject {
             }
         }
     }
+    
+    // MARK: - Guest Mode Management
+    func exitGuestMode() {
+        // Clear current guest session
+        UserDefaults.standard.removeObject(forKey: "userID")
+        UserDefaults.standard.removeObject(forKey: "userName")
+        UserDefaults.standard.removeObject(forKey: "userEmail")
+        UserDefaults.standard.removeObject(forKey: "isGuest")
+        
+        // Reset model properties
+        self.userID = ""
+        self.userName = ""
+        self.userEmail = ""
+        self.isSignedIn = false
+        self.isGuest = false
+        self.errorMessage = ""
+    }
+    
+    // MARK: - Guest Account Deletion
+    func deleteGuestAccount(feedback: String? = nil, completion: ((Result<Void, Error>) -> Void)? = nil) {
+        guard isGuest, !userID.isEmpty else {
+            let error = NSError(domain: "AuthenticationModel", code: 401,
+                               userInfo: [NSLocalizedDescriptionKey: "Not a guest account"])
+            errorMessage = "Cannot delete: not a guest account"
+            completion?(.failure(error))
+            return
+        }
+        
+        isLoading = true
+        errorMessage = ""
+        
+        // Store the original userID for the API call
+        let guestUserId = self.userID
+        
+        // Call the ChatService to request account deletion
+        ChatService.shared.requestAccountDeletion(userId: guestUserId, feedback: feedback) { [weak self] result in
+            guard let self = self else { return }
+            
+            DispatchQueue.main.async {
+                self.isLoading = false
+                
+                switch result {
+                case .success(let response):
+                    // Log successful deletion request
+                    print("Guest account deletion requested successfully. Response: \(response.message)")
+                    
+                    // Exit guest mode immediately
+                    self.exitGuestMode()
+                    
+                    completion?(.success(()))
+                    
+                case .failure(let error):
+                    self.errorMessage = "Failed to delete account: \(error.localizedDescription)"
+                    completion?(.failure(error))
+                }
+            }
+        }
+    }
+    
+    // Track whether user has completed first-time onboarding
+    var hasCompletedFirstTimeSetup: Bool {
+        get { UserDefaults.standard.bool(forKey: "hasCompletedFirstTimeSetup") }
+        set { UserDefaults.standard.set(newValue, forKey: "hasCompletedFirstTimeSetup") }
+    }
 }
