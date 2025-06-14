@@ -10,16 +10,12 @@ struct ContentView: View {
     var body: some View {
         ZStack {
             if showingFirstTimeSetup {
-                PersonalInfoSetupView(authModel: authModel, onComplete: {
-                    withAnimation(.spring(response: 0.6, dampingFraction: 0.8)) {
-                        showingFirstTimeSetup = false
-                    }
-                })
-                .transition(.asymmetric(
-                    insertion: .move(edge: .bottom).combined(with: .opacity),
-                    removal: .move(edge: .bottom).combined(with: .opacity)
-                ))
-                .zIndex(2)
+                OnboardingView(model: OnboardingModel()) 
+                    .transition(AnyTransition.asymmetric(
+                        insertion: AnyTransition.move(edge: .bottom).combined(with: AnyTransition.opacity),
+                        removal: AnyTransition.move(edge: .bottom).combined(with: AnyTransition.opacity)
+                    ))
+                    .zIndex(2)
             }
             else if authModel.isSignedIn {
                 if let _ = connectionModel.userProfile {
@@ -27,35 +23,35 @@ struct ContentView: View {
                         MainView()
                             .environmentObject(authModel)
                             .environmentObject(connectionModel)
-                            .transition(.asymmetric(
-                                insertion: .move(edge: .trailing).combined(with: .opacity),
-                                removal: .move(edge: .leading).combined(with: .opacity)
+                            .transition(AnyTransition.asymmetric(
+                                insertion: AnyTransition.move(edge: .trailing).combined(with: AnyTransition.opacity),
+                                removal: AnyTransition.move(edge: .leading).combined(with: AnyTransition.opacity)
                             ))
                             .zIndex(1)
                             .matchedGeometryEffect(id: "mainContainer", in: viewTransition)
                     } else {
                         PartnerConnectionView(connectionModel: connectionModel, authModel: authModel)
-                            .transition(.asymmetric(
-                                insertion: .scale(scale: 0.9).combined(with: .opacity),
-                                removal: .scale(scale: 1.1).combined(with: .opacity)
+                            .transition(AnyTransition.asymmetric(
+                                insertion: AnyTransition.scale(scale: 0.9).combined(with: AnyTransition.opacity),
+                                removal: AnyTransition.scale(scale: 1.1).combined(with: AnyTransition.opacity)
                             ))
                             .zIndex(0.5)
                             .matchedGeometryEffect(id: "connectionContainer", in: viewTransition)
                     }
                 } else {
                     ProfileSetupView(connectionModel: connectionModel, authModel: authModel)
-                        .transition(.asymmetric(
-                            insertion: .move(edge: .bottom).combined(with: .opacity),
-                            removal: .move(edge: .top).combined(with: .opacity)
+                        .transition(AnyTransition.asymmetric(
+                            insertion: AnyTransition.move(edge: .bottom).combined(with: AnyTransition.opacity),
+                            removal: AnyTransition.move(edge: .top).combined(with: AnyTransition.opacity)
                         ))
                         .zIndex(0.5)
                         .matchedGeometryEffect(id: "setupContainer", in: viewTransition)
                 }
             } else {
                 LoginView(authModel: authModel)
-                    .transition(.asymmetric(
-                        insertion: .move(edge: .bottom).combined(with: .opacity),
-                        removal: .scale(scale: 0.9).combined(with: .opacity)
+                    .transition(AnyTransition.asymmetric(
+                        insertion: AnyTransition.move(edge: .bottom).combined(with: AnyTransition.opacity),
+                        removal: AnyTransition.scale(scale: 0.9).combined(with: AnyTransition.opacity)
                     ))
                     .zIndex(0)
                     .matchedGeometryEffect(id: "loginContainer", in: viewTransition)

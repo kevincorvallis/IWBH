@@ -25,12 +25,19 @@ Contains the complete iOS application built with SwiftUI:
 ios-app/
 ├── IWBH/                   # Main app source code
 │   ├── Models/             # Data models and business logic
-│   ├── Views/              # SwiftUI views and UI components
+│   ├── Views/              # SwiftUI views organized by feature
+│   │   ├── Auth/           # Authentication views
+│   │   ├── Chat/           # Chat interface views
+│   │   ├── Components/     # Reusable UI components
+│   │   ├── Profile/        # Profile management views
+│   │   ├── Shared/         # Shared views and utilities
+│   │   └── Trackers/       # Tracker-related views
 │   ├── Services/           # API communication services
 │   ├── Extensions/         # Swift extensions and utilities
-│   ├── Assets.xcassets/    # App icons, images, and colors
-│   └── Widgets/            # Widget-related files
-├── TrackerWidgetExtension/ # iOS Widget Extension
+│   ├── Shared/             # Shared code and utilities
+│   │   └── Widgets/        # Widget-related shared code
+│   └── Assets.xcassets/    # App icons, images, and colors
+├── TrackerWidgetExtension/ # iOS Widget Extension (separate target)
 ├── IWBHTests/              # Unit tests
 ├── IWBHUITests/            # UI automation tests
 └── IWBH.xcodeproj/         # Xcode project file
@@ -39,6 +46,7 @@ ios-app/
 ### Key iOS Components
 
 - **Models/**: Core data structures (AuthenticationModel, CustomTrackersModel, etc.)
+- **Views/**: SwiftUI interface components organized by feature area
 - **Views/**: SwiftUI interface components organized by feature
 - **Services/**: External API communication (ChatService for AI integration)
 - **Extensions/**: Utility extensions (HapticFeedback, etc.)
@@ -49,13 +57,30 @@ Node.js/Express API server that powers the AI chat functionality:
 
 ```
 backend/
-├── services/               # Business logic services
-│   └── chatService.js      # OpenAI integration and data management
+├── config/                 # Configuration files
+│   ├── app.js              # Application configuration
+│   ├── database.js         # AWS DynamoDB configuration
+│   └── openai.js           # OpenAI API configuration
+├── controllers/            # Request handlers
+│   └── chatController.js   # Chat endpoint logic
+├── middleware/             # Express middleware
+│   ├── auth.js             # Authentication middleware
+│   ├── errorHandler.js     # Error handling middleware
+│   └── rateLimiter.js      # Rate limiting middleware
+├── models/                 # Data models
+│   ├── Chat.js             # Chat data model
+│   └── User.js             # User data model
 ├── routes/                 # API endpoint definitions
 │   └── chatRoutes.js       # Chat-related API routes
-├── config/                 # Configuration files
-│   ├── dynamodb.js         # AWS DynamoDB configuration
-│   └── openai.js           # OpenAI API configuration
+├── services/               # Business logic services
+│   └── chatService.js      # OpenAI integration and data management
+├── utils/                  # Utility functions
+│   ├── logger.js           # Logging utility
+│   ├── response.js         # Response formatting
+│   └── validation.js       # Input validation
+├── logs/                   # Log files (git ignored)
+├── .env.example            # Environment variables template
+├── .gitignore              # Backend-specific git ignore rules
 ├── package.json            # Node.js dependencies and scripts
 └── server.js               # Express server entry point
 ```
